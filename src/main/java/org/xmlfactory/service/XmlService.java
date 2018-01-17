@@ -11,8 +11,7 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,6 +50,60 @@ public class XmlService {
             }
             visit(childNode, level + 1, nodeName, count, result);
         }
+    }
+
+    public String readFromFile() {
+        String xml2String = "";
+        File xmlFile = new File(fileName);
+        Reader fileReader = null;
+        try {
+            fileReader = new FileReader(xmlFile);
+            BufferedReader bufReader = new BufferedReader(fileReader);
+            StringBuilder sb = new StringBuilder();
+            String line = bufReader.readLine();
+            while (line != null) {
+                sb.append(line).append("\n");
+                line = bufReader.readLine();
+            }
+            xml2String = sb.toString();
+            System.out.println("XML to String using BufferedReader : ");
+            System.out.println(xml2String);
+            bufReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return xmlEscapeText(xml2String);
+    }
+
+    private String xmlEscapeText(String t) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < t.length(); i++) {
+            char c = t.charAt(i);
+            switch (c) {
+                case '<':
+                    sb.append("&lt;");
+                    break;
+                case '>':
+                    sb.append("&gt;");
+                    break;
+                case '\"':
+                    sb.append("&quot;");
+                    break;
+                case '&':
+                    sb.append("&amp;");
+                    break;
+                case '\'':
+                    sb.append("&apos;");
+                    break;
+                default:
+                    if (c > 0x7e) {
+                        sb.append("&#").append((int) c).append(";");
+                    } else
+                        sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
 }

@@ -35,6 +35,7 @@ public class XmlRequestController {
         model.addAttribute("name", request.getName());
         model.addAttribute("count", request.getCount());
         model.addAttribute("result", xmlService.getNodeValues(request.getName(), request.getCount()));
+        model.addAttribute("content",  xmlService.readFromFile());
         return "result";
     }
 
